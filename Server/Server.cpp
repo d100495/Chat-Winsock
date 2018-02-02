@@ -36,6 +36,7 @@ void Server::WaitingForConnection() //Definicja metody WaitingForConnection
 {
 	if (::bind(MainSocket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR) // Przypisanie gniazda portowi
 	{
+		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 		cout << "Server: bind() failed: " << WSAGetLastError() << endl;
 		closesocket(MainSocket);
 	}
@@ -45,6 +46,7 @@ void Server::WaitingForConnection() //Definicja metody WaitingForConnection
 		cout << "Server: listen(): Error listening on socket " << WSAGetLastError() << endl;
 	}
 	cout << "Server: Waiting for a client to connect..." << endl;
+	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
 	cout << "***Hint: Server is ready...run your client program...***" << endl;
 
 	while (true)
@@ -54,6 +56,7 @@ void Server::WaitingForConnection() //Definicja metody WaitingForConnection
 		{
 			AcceptSocket = accept(MainSocket, 0, 0); // Akceptacja po³¹czenia
 		}
+		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
 		cout << "Server: Client Connected!" << endl;
 		MainSocket = AcceptSocket;
 		break;
@@ -61,8 +64,10 @@ void Server::WaitingForConnection() //Definicja metody WaitingForConnection
 }
 
 
-string Server::CurrentDateTime()  //Zwraca aktualny czas systemowy
+string Server::currentDateTime()  //Zwraca aktualny czas systemowy
 {
+
+	SetConsoleTextAttribute(hOut, FOREGROUND_BLUE | FOREGROUND_RED);
 	time_t rawtime;
 	struct tm * timeinfo;
 	char buffer[80];
@@ -92,6 +97,7 @@ void Server::Sending() //Definicja metody Sending
 	cto = clock();
 	while (true)
 	{
+
 		char sendbuf[200] = "";
 		cin.getline(sendbuf, 200);
 
@@ -120,11 +126,13 @@ void Server::Sending() //Definicja metody Sending
 
 		if (bytesSent == SOCKET_ERROR)
 		{
+			SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 			cout << "Server: send() error " << WSAGetLastError() << "." << endl;
 			break;
 		}
 		else if (!strncmp(sendbuf, "CLOSE", 7))
 		{
+			SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 			cout << "Server: Connection Closed." << endl;
 
 			Sleep(3000);
@@ -140,12 +148,14 @@ void Server::Sending() //Definicja metody Sending
 		}
 		else if (bytesSent != 0)
 		{
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_RED);
+
 			//	cout << "Bytes sent: " << bytesSent << " Wyslano slow: "<< wordCount << " Wyslano znakow" << charCount << endl;
 			wordCount = 1;
 			//	charCountSum = 0;
 
 
-			string currentTime = CurrentDateTime();
+			string currentTime = currentDateTime();
 
 			char tab2[80]; //Aktualny czas
 			strncpy(tab2, currentTime.c_str(), sizeof(tab2));
@@ -167,7 +177,7 @@ void Server::Sending() //Definicja metody Sending
 				myfile.close();
 			}
 			
-
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY);
 
 		}
 	}
@@ -189,6 +199,7 @@ void Server::Receiving() //Definicja metody Receiving
 
 		if (bytesRecv == SOCKET_ERROR)
 		{
+			SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 			//cout << "Server: recv() error " << WSAGetLastError() << "." << endl;
 			cout << "Server: lost connection with client!" << endl;
 			WSACleanup();
@@ -196,14 +207,18 @@ void Server::Receiving() //Definicja metody Receiving
 		}
 		else if (!strncmp(recvbuf, "SHUTDOWN", 8))
 		{
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
 			cout << "Server: recv() finished. " << endl;
 			break;
 		}
 		else
 		{
+
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
 			cout << "Server: recv() is OK." << endl;
 
-			string currentTime = CurrentDateTime();
+			SetConsoleTextAttribute(hOut, FOREGROUND_INTENSITY);
+			string currentTime = currentDateTime();
 
 			char tab2[80]; //Aktualny czas
 			strncpy(tab2, currentTime.c_str(), sizeof(tab2));
@@ -224,17 +239,21 @@ void Server::Receiving() //Definicja metody Receiving
 				myfile << tab2 << userName << recvbuf << endl;
 				myfile.close();
 			}
-
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
 			cout << "Server: Bytes received: " << bytesRecv << "." << endl;
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY);
 		}
 	}
 }
 
 
-void Server::LoadChatHistory()
+void Server::loadChatHistory()
 {
+	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 	ifstream myReadFile;
 	myReadFile.open("history.txt");
+
 
 	string output;
 	//std::vector<char> output;
@@ -259,7 +278,7 @@ void Server::RunThread(int choice) //Definicja metody RunThread
 	if (choice == 1)
 	{
 		thread t(&Server::Sending, this);
-		LoadChatHistory();
+		loadChatHistory();
 		t.detach();
 	}
 	if (choice == 2)
@@ -318,6 +337,8 @@ void Server::ReadFile()
 	}
 	else
 	{
+
+		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 		cout << "ERROR: Couldn't open the file." << endl;
 	}
 }
