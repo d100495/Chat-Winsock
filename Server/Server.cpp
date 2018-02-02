@@ -13,7 +13,7 @@ Server::~Server() { }
 
 void Server::Initiation() //Definicja metody Initiation
 {
-	wVersionRequested = MAKEWORD(2,2); 
+	wVersionRequested = MAKEWORD(2, 2);
 	WSAStartup(wVersionRequested, &wsaData); // Wybór wersji 2.2 Winsocka
 }
 
@@ -39,7 +39,7 @@ void Server::WaitingForConnection() //Definicja metody WaitingForConnection
 		cout << "Server: bind() failed: " << WSAGetLastError() << endl;
 		closesocket(MainSocket);
 	}
- 
+
 	if (listen(MainSocket, 10) == SOCKET_ERROR) // Nas³uchiwanie na po³¹czenie
 	{
 		cout << "Server: listen(): Error listening on socket " << WSAGetLastError() << endl;
@@ -52,12 +52,29 @@ void Server::WaitingForConnection() //Definicja metody WaitingForConnection
 		AcceptSocket = SOCKET_ERROR;
 		while (AcceptSocket == SOCKET_ERROR)
 		{
-			AcceptSocket = accept (MainSocket, 0, 0); // Akceptacja po³¹czenia
+			AcceptSocket = accept(MainSocket, 0, 0); // Akceptacja po³¹czenia
 		}
-	cout << "Server: Client Connected!" << endl;
-	MainSocket = AcceptSocket;
-	break;
+		cout << "Server: Client Connected!" << endl;
+		MainSocket = AcceptSocket;
+		break;
 	}
+}
+
+
+string Server::CurrentDateTime()  //Zwraca aktualny czas systemowy
+{
+	time_t rawtime;
+	struct tm * timeinfo;
+	char buffer[80];
+
+	time(&rawtime);
+	
+	timeinfo = localtime(&rawtime);
+
+	strftime(buffer, sizeof(buffer), "%F %T", timeinfo);
+	std::string str(buffer);
+
+	return str;
 }
 
 
@@ -66,17 +83,17 @@ void Server::Sending() //Definicja metody Sending
 	// Wysy³anie danych do klienta
 	int bytesSent;
 	int bytesSentTotal = 0;
-	hOut = GetStdHandle( STD_OUTPUT_HANDLE );
+	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	int wordCount = 1;
 	int wordCountSum = 0;
 	int charCount = 0;
 	int charCountSum = 0;
 	clock_t cto;                         //poczatek zegara
 	cto = clock();
-	while(true)
-	{	
+	while (true)
+	{
 		char sendbuf[200] = "";
-		cin.getline(sendbuf,200);
+		cin.getline(sendbuf, 200);
 
 		if (strncmp(sendbuf, "INFO", 4)) {
 			charCount = strlen(sendbuf);
@@ -88,10 +105,10 @@ void Server::Sending() //Definicja metody Sending
 			wordCountSum += wordCount;
 			charCountSum += charCount;
 		}
-	
-		
-	
-		int x,y;
+
+
+
+		int x, y;
 		GetCursor(x, y);
 		y--;
 		x = 0;
@@ -101,7 +118,7 @@ void Server::Sending() //Definicja metody Sending
 			bytesSentTotal += bytesSent;
 		}
 
-		if(bytesSent == SOCKET_ERROR)
+		if (bytesSent == SOCKET_ERROR)
 		{
 			cout << "Server: send() error " << WSAGetLastError() << "." << endl;
 			break;
@@ -117,33 +134,59 @@ void Server::Sending() //Definicja metody Sending
 			clock_t ct;                   //koniec zegara
 			ct = clock();
 			double time = (double)(ct - cto) / CLOCKS_PER_SEC;
-			cout << "Wyslano slow lacznie: " << wordCountSum - 1 << " Wyslano znakow lacznie " << charCountSum<< endl;
+			cout << "Wyslano slow lacznie: " << wordCountSum - 1 << " Wyslano znakow lacznie " << charCountSum << endl;
 			cout << "Rozmowa trwa: " << time << "sec" << endl;
 			cout << "Waga wyslanych danych: " << bytesSentTotal << "byte" << endl;
 		}
 		else if (bytesSent != 0)
 		{
-		//	cout << "Bytes sent: " << bytesSent << " Wyslano slow: "<< wordCount << " Wyslano znakow" << charCount << endl;
+			//	cout << "Bytes sent: " << bytesSent << " Wyslano slow: "<< wordCount << " Wyslano znakow" << charCount << endl;
 			wordCount = 1;
-		//	charCountSum = 0;
-			cout << "Server: " << sendbuf << endl;
+			//	charCountSum = 0;
+
+
+			string currentTime = CurrentDateTime();
+
+			char tab2[80]; //Aktualny czas
+			strncpy(tab2, currentTime.c_str(), sizeof(tab2));
+			tab2[sizeof(tab2) - 1] = 0;
+
+			char userName[20]; //Nazwa u¿ytkownika
+			strncpy(userName, " | Server: ", sizeof(userName));
+			userName[sizeof(userName) - 1] = 0;
+
+
+			cout << tab2 << userName << sendbuf << endl; //Wyœwietlanie wiadomoœci na ekranie
+
+		    //Zapis do pliku
+			ofstream myfile;
+			myfile.open("history.txt", std::ios_base::app);
+			if (myfile.is_open())
+			{
+				myfile << tab2 << userName << sendbuf << endl;
+				myfile.close();
+			}
 			
+
+
 		}
 	}
 }
+
+
 
 
 void Server::Receiving() //Definicja metody Receiving
 {
 	// Odbieranie danych z klienta
 	int bytesRecv = SOCKET_ERROR;
-	hOut = GetStdHandle( STD_OUTPUT_HANDLE );
+	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	while(true)
+	while (true)
 	{
 		char recvbuf[200] = "";
 		bytesRecv = recv(MainSocket, recvbuf, 200, 0);
- 
+
 		if (bytesRecv == SOCKET_ERROR)
 		{
 			//cout << "Server: recv() error " << WSAGetLastError() << "." << endl;
@@ -159,20 +202,64 @@ void Server::Receiving() //Definicja metody Receiving
 		else
 		{
 			cout << "Server: recv() is OK." << endl;
-			
-			cout << "Client: " << recvbuf << endl;
-			
+
+			string currentTime = CurrentDateTime();
+
+			char tab2[80]; //Aktualny czas
+			strncpy(tab2, currentTime.c_str(), sizeof(tab2));
+			tab2[sizeof(tab2) - 1] = 0;
+
+			char userName[20]; //Nazwa u¿ytkownika
+			strncpy(userName, " | Client: ", sizeof(userName));
+			userName[sizeof(userName) - 1] = 0;
+
+
+			cout << tab2 << userName << recvbuf << endl; //Wyœwietlanie wiadomoœci na ekranie
+
+			//Zapis do pliku
+			ofstream myfile;
+			myfile.open("history.txt", std::ios_base::app);
+			if (myfile.is_open())
+			{
+				myfile << tab2 << userName << recvbuf << endl;
+				myfile.close();
+			}
+
 			cout << "Server: Bytes received: " << bytesRecv << "." << endl;
 		}
 	}
 }
 
 
+void Server::LoadChatHistory()
+{
+	ifstream myReadFile;
+	myReadFile.open("history.txt");
+
+	string output;
+	//std::vector<char> output;
+	if (myReadFile.is_open()) {
+		while (!myReadFile.eof()) {
+			cout << "=========Historia konwersacji=========" << endl;
+
+			while (getline(myReadFile, output))
+			{
+				std::cout << output << std::endl;
+			}
+			cout << "=========Rozpoczeto nowa konwersacje=========" << endl;
+			cout << endl;
+
+		}
+	}
+	myReadFile.close();
+}
+
 void Server::RunThread(int choice) //Definicja metody RunThread
 {
 	if (choice == 1)
 	{
 		thread t(&Server::Sending, this);
+		LoadChatHistory();
 		t.detach();
 	}
 	if (choice == 2)
@@ -185,24 +272,24 @@ void Server::RunThread(int choice) //Definicja metody RunThread
 
 void Server::SetCursor(int x, int y)
 {
-    HANDLE console=GetStdHandle(STD_OUTPUT_HANDLE);
-    COORD pos;
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD pos;
 
-    pos.X=x;
-    pos.Y=y;
+	pos.X = x;
+	pos.Y = y;
 
-    SetConsoleCursorPosition(console,pos);
+	SetConsoleCursorPosition(console, pos);
 }
 
 void Server::GetCursor(int & x, int & y)
 {
-    HANDLE console=GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
 
-    GetConsoleScreenBufferInfo(console,&csbi);
+	GetConsoleScreenBufferInfo(console, &csbi);
 
-    x=csbi.dwCursorPosition.X;
-    y=csbi.dwCursorPosition.Y;
+	x = csbi.dwCursorPosition.X;
+	y = csbi.dwCursorPosition.Y;
 }
 
 
@@ -215,12 +302,12 @@ void Server::ReadFile()
 	char* buffer;
 	int length = myStream.tellg(); // Sprawdzenie pozycji, która odpowiada d³ugoœci pliku
 	myStream.seekg(0, ios::beg); // Przejœcie na poczatek pliku
-	if(myStream) // Sprawdzamy czy plik zosta³ otwarty.
+	if (myStream) // Sprawdzamy czy plik zosta³ otwarty.
 	{
 		buffer = new char[length];
 		myStream >> buffer; // Odczytanie danych z pliku do bufora.
 
-		if( SendAll( MainSocket, buffer, & length ) == - 1 ) 
+		if (SendAll(MainSocket, buffer, &length) == -1)
 		{
 			cout << "We only sent " << length << " bytes because of the error!" << endl;
 		}
@@ -238,17 +325,17 @@ void Server::ReadFile()
 
 int Server::SendAll(int MainSocket, char* buffor, int* length)
 {
-    int total = 0; // Tyle bajtów ju¿ wys³aliœmy
-    int bytesleft = * length; // Tyle jeszcze zosta³o do wys³ania
-    int n;
-    
-    while( total < * length ) {
-        n = send( MainSocket, buffor + total, bytesleft, 0 );
-        if( n == - 1 ) { break; }
-        total += n;
-        bytesleft -= n;
-    }
-    * length = total; // Zwraca iloœæ faktycznie wys³anych bajtów
-    
-    return n ==- 1 ?- 1: 0; // Zwraca -1 w przypadku b³êdu, 0, gdy siê powiedzie
+	int total = 0; // Tyle bajtów ju¿ wys³aliœmy
+	int bytesleft = *length; // Tyle jeszcze zosta³o do wys³ania
+	int n;
+
+	while (total < *length) {
+		n = send(MainSocket, buffor + total, bytesleft, 0);
+		if (n == -1) { break; }
+		total += n;
+		bytesleft -= n;
+	}
+	*length = total; // Zwraca iloœæ faktycznie wys³anych bajtów
+
+	return n == -1 ? -1 : 0; // Zwraca -1 w przypadku b³êdu, 0, gdy siê powiedzie
 }

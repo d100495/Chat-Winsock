@@ -13,7 +13,7 @@ Client::~Client() { }
 
 void Client::Initiation() //Definicja metody Initiation
 {
-	wVersionRequested = MAKEWORD(2,2); 
+	wVersionRequested = MAKEWORD(2, 2);
 	WSAStartup(wVersionRequested, &wsaData); // Wybór wersji 2.2 Winsocka
 }
 
@@ -35,35 +35,49 @@ void Client::GetAdress() //Definicja metody GetAdress
 bool Client::Connect() //Definicja metody Connect
 {
 	if (connect(MainSocket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR)
-    {
+	{
 		cout << "Client: connect() - Failed to connect." << endl;
-        WSACleanup();
-        return false;
-    }
-    else
-    {
+		WSACleanup();
+		return false;
+	}
+	else
+	{
 		cout << "Client is ready to send and read data" << endl;
 		return true;
-    }
+	}
 }
+string Client::CurrentDateTime()  //Zwraca aktualny czas systemowy
+{
+	time_t rawtime;
+	struct tm * timeinfo;
+	char buffer[80];
 
+	time(&rawtime);
+
+	timeinfo = localtime(&rawtime);
+
+	strftime(buffer, sizeof(buffer), "%F %T", timeinfo);
+	std::string str(buffer);
+
+	return str;
+}
 
 void Client::Sending() //Definicja metody Sending
 {
 	// Wysy³anie danych do serwera
 	int bytesSentTotal = 0;
 	int bytesSent;
-	hOut = GetStdHandle( STD_OUTPUT_HANDLE );
+	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	int wordCount = 1;
 	int wordCountSum = 0;
 	int charCount = 0;
 	int charCountSum = 0;
 	clock_t cto;                         //poczatek zegara
 	cto = clock();
-	while(true)
+	while (true)
 	{
 		char sendbuf[200] = "";
-		cin.getline(sendbuf,200);
+		cin.getline(sendbuf, 200);
 
 		if (strncmp(sendbuf, "INFO", 4)) {
 			charCount = strlen(sendbuf);
@@ -76,7 +90,7 @@ void Client::Sending() //Definicja metody Sending
 			charCountSum += charCount;
 		}
 
-		int x,y;
+		int x, y;
 		GetCursor(x, y);
 		y--;
 		x = 0;
@@ -87,12 +101,12 @@ void Client::Sending() //Definicja metody Sending
 			bytesSentTotal += bytesSent;
 		}
 
-		if(bytesSent == SOCKET_ERROR)
+		if (bytesSent == SOCKET_ERROR)
 		{
 			//cout << "Client: send() error " << WSAGetLastError() << "." << endl;
 			cout << "Client: lost connection with server!" << endl;
 			break;
-		}	
+		}
 		else if (!strncmp(sendbuf, "CLOSE", 7))
 		{
 			cout << "Client: Connection Closed." << endl;
@@ -109,26 +123,48 @@ void Client::Sending() //Definicja metody Sending
 		}
 		else if (bytesSent != 0)
 		{
-			//cout << "Bytes sent: " << bytesSent << endl;
+
+			string currentTime = CurrentDateTime();
+
+			char tab2[80]; //Aktualny czas
+			strncpy(tab2, currentTime.c_str(), sizeof(tab2));
+			tab2[sizeof(tab2) - 1] = 0;
+
+			char userName[20]; //Nazwa u¿ytkownika
+			strncpy(userName, " | Client: ", sizeof(userName));
+			userName[sizeof(userName) - 1] = 0;
+
 			wordCount = 1;
-			cout << "Client: " << sendbuf << endl;
-			
+			cout << tab2 << userName << sendbuf << endl; //Wyœwietlanie wiadomoœci na ekranie
+
+		    //Zapis do pliku
+			ofstream myfile;
+			myfile.open("history.txt", std::ios_base::app);
+			if (myfile.is_open())
+			{
+				myfile << tab2 << userName << sendbuf << endl;
+				myfile.close();
+			}
+			//cout << "Bytes sent: " << bytesSent << endl;
+
 		}
 	}
 }
+
+
 
 void Client::Receiving() //Definicja metody Receiving
 {
 	// Odbieranie danych z serwera
 	int bytesRecv = SOCKET_ERROR;
-	hOut = GetStdHandle( STD_OUTPUT_HANDLE );
+	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    while(true)
+	while (true)
 	{
 		char recvbuf[200] = "";
 		bytesRecv = recv(MainSocket, recvbuf, 200, 0);
 
-        if (bytesRecv == SOCKET_ERROR)
+		if (bytesRecv == SOCKET_ERROR)
 		{
 			cout << "Client: recv() error " << WSAGetLastError() << "." << endl;
 			break;
@@ -141,20 +177,63 @@ void Client::Receiving() //Definicja metody Receiving
 		else
 		{
 			//cout << "Client: recv() is OK." << endl;
-			
-			cout << "Server: " << recvbuf << endl;
-			
+
+			string currentTime = CurrentDateTime();
+
+			char tab2[80]; //Aktualny czas
+			strncpy(tab2, currentTime.c_str(), sizeof(tab2));
+			tab2[sizeof(tab2) - 1] = 0;
+
+			char userName[20]; //Nazwa u¿ytkownika
+			strncpy(userName, " | Server: ", sizeof(userName));
+			userName[sizeof(userName) - 1] = 0;
+
+
+			cout << tab2 << userName << recvbuf << endl; //Wyœwietlanie wiadomoœci na ekranie
+
+		    //Zapis do pliku
+			ofstream myfile;
+			myfile.open("history.txt", std::ios_base::app);
+			if (myfile.is_open())
+			{
+				myfile << tab2 << userName << recvbuf << endl;
+				myfile.close();
+			}
 			//cout << "Client: Bytes received: " << bytesRecv << "." << endl;
 		}
 	}
 }
 
+void Client::LoadChatHistory()
+{
+	ifstream myReadFile;
+	myReadFile.open("history.txt");
+
+	string output;
+	//std::vector<char> output;
+	if (myReadFile.is_open()) {
+		while (!myReadFile.eof()) {
+			cout << "=========Historia konwersacji=========" << endl;
+
+			while (getline(myReadFile, output)) 
+			{
+				std::cout << output << std::endl;
+			}
+			cout << "=========Rozpoczeto nowa konwersacje=========" << endl;
+			cout << endl;
+
+		}
+	}
+	myReadFile.close();
+}
 
 void Client::RunThread(int choice) //Definicja metody RunThread
 {
 	if (choice == 1)
 	{
 		thread t(&Client::Receiving, this);
+
+		LoadChatHistory();
 		t.detach();
 	}
 	if (choice == 2)
@@ -167,24 +246,24 @@ void Client::RunThread(int choice) //Definicja metody RunThread
 
 void Client::SetCursor(int x, int y)
 {
-    HANDLE console=GetStdHandle(STD_OUTPUT_HANDLE);
-    COORD pos;
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD pos;
 
-    pos.X=x;
-    pos.Y=y;
+	pos.X = x;
+	pos.Y = y;
 
-    SetConsoleCursorPosition(console,pos);
+	SetConsoleCursorPosition(console, pos);
 }
 
 void Client::GetCursor(int & x, int & y)
 {
-    HANDLE console=GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
 
-    GetConsoleScreenBufferInfo(console,&csbi);
+	GetConsoleScreenBufferInfo(console, &csbi);
 
-    x=csbi.dwCursorPosition.X;
-    y=csbi.dwCursorPosition.Y;
+	x = csbi.dwCursorPosition.X;
+	y = csbi.dwCursorPosition.Y;
 }
 
 

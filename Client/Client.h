@@ -6,6 +6,9 @@
 #include <iostream>
 #include <thread>
 #include <fstream>
+#pragma comment(lib, "Ws2_32.lib")
+#include <vector>
+#include <string>
 
 using namespace std;
 
@@ -29,6 +32,9 @@ public:
 	bool Connect(); // Metoda pozwalaj¹ca na po³¹czenie siê z serwerem
 	void Sending(); // Metoda wysy³aj¹ca dane
 	void Receiving(); // Metoda odbieraj¹ca dane
+
+	string CurrentDateTime();
+	void LoadChatHistory();
 
 	void RunThread(int); // Metoda tworz¹ca nowy w¹tek
 

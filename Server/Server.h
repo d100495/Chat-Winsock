@@ -4,7 +4,10 @@
 #include <WinSock2.h>
 #include <iostream>
 #include <thread>
+#include <conio.h>
 #include <fstream>
+#pragma comment(lib, "Ws2_32.lib")
+#include <string>
 
 using namespace std;
 
@@ -28,6 +31,9 @@ public:
 	void WaitingForConnection(); // Metoda nas³uchuj¹ca na po³¹czenie
 	void Sending(); // Metoda wysy³aj¹ca dane
 	void Receiving(); // Metoda odbieraj¹ca dane
+
+	string CurrentDateTime();
+	void LoadChatHistory();
 
 	void RunThread(int); // Metoda tworz¹ca nowy w¹tek
 

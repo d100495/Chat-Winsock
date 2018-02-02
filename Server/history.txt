@@ -1,0 +1,46 @@
+2018-02-02 20:41 | Server: klient pisze
+2018-02-02 20:41 | Server: znaczy server pisze
+2018-02-02 20:41 | Client: klient pisze
+2018-02-02 20:41 | Client: 1
+2018-02-02 20:41 | Client: 2
+2018-02-02 20:41 | Client: 3
+2018-02-02 20:41 | Server: 1
+2018-02-02 20:41 | Server: 2
+2018-02-02 20:41 | Server: 3
+2018-02-02 20:41 | Client: CLOSE
+2018-02-02 20:42 | Client: asd
+2018-02-02 20:42 | Client: dsg
+2018-02-02 20:42 | Client: sg
+2018-02-02 20:42 | Client: sdf
+2018-02-02 20:42 | Client: gcvb
+2018-02-02 20:42 | Client: dbfdgh
+2018-02-02 20:42 | Client: fd
+2018-02-02 20:42 | Client: g
+2018-02-02 20:42 | Client: fdg
+2018-02-02 20:42 | Client: fd
+2018-02-02 20:42 | Client: df
+2018-02-02 20:42 | Client: hg
+2018-02-02 20:42 | Client: df
+2018-02-02 20:42 | Client: h
+2018-02-02 20:42 | Client: dfs
+2018-02-02 20:42 | Server: dsf
+2018-02-02 20:42 | Server: df
+2018-02-02 20:42 | Server: fgf
+2018-02-02 20:42 | Server: dg
+2018-02-02 20:42 | Server: fd
+2018-02-02 20:42 | Server: g
+2018-02-02 20:42 | Server: fd
+2018-02-02 20:42 | Server: gfd
+2018-02-02 20:42 | Server: g
+2018-02-02 20:42 | Server: df
+2018-02-02 20:42 | Server: g
+2018-02-02 20:42 | Client: dsfs
+2018-02-02 20:42 | Client: dsfsd
+2018-02-02 20:42 | Client: f
+2018-02-02 20:42 | Server: fsdgfghdfs
+2018-02-02 20:42 | Server: h
+2018-02-02 20:42 | Server: sdhf
+2018-02-02 20:42 | Server: d
+2018-02-02 20:58 | Client: Witam
+2018-02-02 20:58 | Client: Witam
+2018-02-02 20:59 | Client: sad
