@@ -12,10 +12,10 @@ int main()
 	c.CreateSocket(); // Wywo³anie metody tworz¹cej Gniazdo
 	c.GetAdress(); // Wywo³anie metody ustalaj¹cej adres IP oraz Port 
 
-	if(c.Connect() == true) // Wywo³anie metody pozwalaj¹cej na po³¹czenie siê z serwerem
+	if (c.Connect() == true) // Wywo³anie metody pozwalaj¹cej na po³¹czenie siê z serwerem
 	{
 		cout << "Press 1 if you want to start conversation with the client." << endl
-		     << "Press 2 if you want to read a file from the server." << endl;
+			<< "Press 2 if you want to read a file from the server." << endl;
 		cin >> choice;
 		cout << endl;
 

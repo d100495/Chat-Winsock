@@ -33,10 +33,12 @@ public:
 	void Sending(); // Metoda wysy³aj¹ca dane
 	void Receiving(); // Metoda odbieraj¹ca dane
 
-	string CurrentDateTime();
-	void LoadChatHistory();
+	void loadChatHistory();
 
 	void RunThread(int); // Metoda tworz¹ca nowy w¹tek
+
+	string currentDateTime();
+
 
 	void SetCursor(int, int);
 	void GetCursor(int&, int&);

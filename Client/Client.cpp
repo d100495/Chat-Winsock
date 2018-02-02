@@ -36,18 +36,23 @@ bool Client::Connect() //Definicja metody Connect
 {
 	if (connect(MainSocket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR)
 	{
+		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 		cout << "Client: connect() - Failed to connect." << endl;
 		WSACleanup();
 		return false;
 	}
 	else
 	{
+		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
 		cout << "Client is ready to send and read data" << endl;
 		return true;
 	}
 }
-string Client::CurrentDateTime()  //Zwraca aktualny czas systemowy
+string Client::currentDateTime()  //Zwraca aktualny czas systemowy
 {
+	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hOut, FOREGROUND_BLUE | FOREGROUND_RED);
+
 	time_t rawtime;
 	struct tm * timeinfo;
 	char buffer[80];
@@ -124,7 +129,7 @@ void Client::Sending() //Definicja metody Sending
 		else if (bytesSent != 0)
 		{
 
-			string currentTime = CurrentDateTime();
+			string currentTime = currentDateTime();
 
 			char tab2[80]; //Aktualny czas
 			strncpy(tab2, currentTime.c_str(), sizeof(tab2));
@@ -178,7 +183,7 @@ void Client::Receiving() //Definicja metody Receiving
 		{
 			//cout << "Client: recv() is OK." << endl;
 
-			string currentTime = CurrentDateTime();
+			string currentTime = currentDateTime();
 
 			char tab2[80]; //Aktualny czas
 			strncpy(tab2, currentTime.c_str(), sizeof(tab2));
@@ -204,7 +209,7 @@ void Client::Receiving() //Definicja metody Receiving
 	}
 }
 
-void Client::LoadChatHistory()
+void Client::loadChatHistory()
 {
 	ifstream myReadFile;
 	myReadFile.open("history.txt");
@@ -233,7 +238,7 @@ void Client::RunThread(int choice) //Definicja metody RunThread
 	{
 		thread t(&Client::Receiving, this);
 
-		LoadChatHistory();
+		loadChatHistory();
 		t.detach();
 	}
 	if (choice == 2)
