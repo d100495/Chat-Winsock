@@ -51,13 +51,30 @@ bool Client::Connect() //Definicja metody Connect
 void Client::Sending() //Definicja metody Sending
 {
 	// Wysy³anie danych do serwera
+	int bytesSentTotal = 0;
 	int bytesSent;
 	hOut = GetStdHandle( STD_OUTPUT_HANDLE );
-
+	int wordCount = 1;
+	int wordCountSum = 0;
+	int charCount = 0;
+	int charCountSum = 0;
+	clock_t cto;                         //poczatek zegara
+	cto = clock();
 	while(true)
 	{
 		char sendbuf[200] = "";
 		cin.getline(sendbuf,200);
+
+		if (strncmp(sendbuf, "INFO", 4)) {
+			charCount = strlen(sendbuf);
+			for (int i = 0; i < strlen(sendbuf); i++)
+			{
+				if (sendbuf[i] == ' ' && sendbuf[i + 1] != ' ') wordCount++;
+				if (sendbuf[i] == ' ') charCount--;
+			}
+			wordCountSum += wordCount;
+			charCountSum += charCount;
+		}
 
 		int x,y;
 		GetCursor(x, y);
@@ -65,7 +82,10 @@ void Client::Sending() //Definicja metody Sending
 		x = 0;
 		SetCursor(x, y);
 
-		bytesSent = send(MainSocket, sendbuf, strlen(sendbuf), 0);
+		if (strncmp(sendbuf, "INFO", 4)) {
+			bytesSent = send(MainSocket, sendbuf, strlen(sendbuf), 0);
+			bytesSentTotal += bytesSent;
+		}
 
 		if(bytesSent == SOCKET_ERROR)
 		{
@@ -73,16 +93,24 @@ void Client::Sending() //Definicja metody Sending
 			cout << "Client: lost connection with server!" << endl;
 			break;
 		}	
-		else if (!strncmp(sendbuf, "CLOSING", 7))
+		else if (!strncmp(sendbuf, "CLOSE", 7))
 		{
 			cout << "Client: Connection Closed." << endl;
 			Sleep(3000);
 			WSACleanup();
 		}
+		else if (!strncmp(sendbuf, "INFO", 4)) {
+			clock_t ct;                   //koniec zegara
+			ct = clock();
+			double time = (double)(ct - cto) / CLOCKS_PER_SEC;
+			cout << "Wyslano slow lacznie: " << wordCountSum - 1 << " Wyslano znakow lacznie " << charCountSum << endl;
+			cout << "Rozmowa trwa: " << time << "sec" << endl;
+			cout << "Waga wyslanych danych: " << bytesSentTotal << "byte" << endl;
+		}
 		else if (bytesSent != 0)
 		{
 			//cout << "Bytes sent: " << bytesSent << endl;
-		
+			wordCount = 1;
 			cout << "Client: " << sendbuf << endl;
 			
 		}
