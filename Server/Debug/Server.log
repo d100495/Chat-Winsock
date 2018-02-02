@@ -1,0 +1,6 @@
+﻿  Server.cpp
+d:\projekty\chat-winsock\server\server.cpp(30): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\um\winsock2.h(1830): note: see declaration of 'inet_addr'
+d:\projekty\chat-winsock\server\server.cpp(83): warning C4018: '<': signed/unsigned mismatch
+d:\projekty\chat-winsock\server\server.cpp(216): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+  Server.vcxproj -> D:\Projekty\Chat-Winsock\Server\Debug\Server.exe
