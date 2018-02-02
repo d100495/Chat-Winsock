@@ -29,7 +29,7 @@ public:
 	void CreateSocket(); // Metoda tworz¹ca Gniazdo
 	void GetAdress(); // Metoda ustalaj¹ca adres IP oraz Port
 	void WaitingForConnection(); // Metoda nas³uchuj¹ca na po³¹czenie
-	string currentDateTime();
+	string currentDateTime(); //Zwraca aktualny czas systemowy
 	void Sending(); // Metoda wysy³aj¹ca dane
 	void Receiving(); // Metoda odbieraj¹ca dane
 

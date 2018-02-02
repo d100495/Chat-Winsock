@@ -48,11 +48,8 @@ bool Client::Connect() //Definicja metody Connect
 		return true;
 	}
 }
-string Client::currentDateTime()  //Zwraca aktualny czas systemowy
+string Client::currentDateTime()  
 {
-	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hOut, FOREGROUND_BLUE | FOREGROUND_RED);
-
 	time_t rawtime;
 	struct tm * timeinfo;
 	char buffer[80];
@@ -109,11 +106,13 @@ void Client::Sending() //Definicja metody Sending
 		if (bytesSent == SOCKET_ERROR)
 		{
 			//cout << "Client: send() error " << WSAGetLastError() << "." << endl;
+			SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 			cout << "Client: lost connection with server!" << endl;
 			break;
 		}
 		else if (!strncmp(sendbuf, "CLOSE", 7))
 		{
+			SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 			cout << "Client: Connection Closed." << endl;
 			Sleep(3000);
 			WSACleanup();
@@ -122,13 +121,14 @@ void Client::Sending() //Definicja metody Sending
 			clock_t ct;                   //koniec zegara
 			ct = clock();
 			double time = (double)(ct - cto) / CLOCKS_PER_SEC;
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 			cout << "Wyslano slow lacznie: " << wordCountSum - 1 << " Wyslano znakow lacznie " << charCountSum << endl;
 			cout << "Rozmowa trwa: " << time << "sec" << endl;
 			cout << "Waga wyslanych danych: " << bytesSentTotal << "byte" << endl;
 		}
 		else if (bytesSent != 0)
 		{
-
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_RED); //Zolty
 			string currentTime = currentDateTime();
 
 			char tab2[80]; //Aktualny czas
@@ -151,7 +151,7 @@ void Client::Sending() //Definicja metody Sending
 				myfile.close();
 			}
 			//cout << "Bytes sent: " << bytesSent << endl;
-
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY);//Jasny do pisania
 		}
 	}
 }
@@ -171,18 +171,20 @@ void Client::Receiving() //Definicja metody Receiving
 
 		if (bytesRecv == SOCKET_ERROR)
 		{
+			SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 			cout << "Client: recv() error " << WSAGetLastError() << "." << endl;
 			break;
 		}
 		else if (!strncmp(recvbuf, "SHUTDOWN", 8))
 		{
+			SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 			cout << "Client: recv() finished. " << endl;
 			break;
 		}
 		else
 		{
 			//cout << "Client: recv() is OK." << endl;
-
+			SetConsoleTextAttribute(hOut, FOREGROUND_INTENSITY);
 			string currentTime = currentDateTime();
 
 			char tab2[80]; //Aktualny czas
@@ -205,12 +207,14 @@ void Client::Receiving() //Definicja metody Receiving
 				myfile.close();
 			}
 			//cout << "Client: Bytes received: " << bytesRecv << "." << endl;
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY);//Jasny do pisania
 		}
 	}
 }
 
 void Client::loadChatHistory()
 {
+	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);//Seledyn
 	ifstream myReadFile;
 	myReadFile.open("history.txt");
 

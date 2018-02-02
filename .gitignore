@@ -27,3 +27,6 @@ Server/.vs/Server/v14/.suo
 *.lastbuildstate
 *.filters
 *.vcxproj
+*.pdb
+*.ilk
+*.sln

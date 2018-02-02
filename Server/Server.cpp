@@ -64,10 +64,8 @@ void Server::WaitingForConnection() //Definicja metody WaitingForConnection
 }
 
 
-string Server::currentDateTime()  //Zwraca aktualny czas systemowy
+string Server::currentDateTime()  
 {
-
-	SetConsoleTextAttribute(hOut, FOREGROUND_BLUE | FOREGROUND_RED);
 	time_t rawtime;
 	struct tm * timeinfo;
 	char buffer[80];
@@ -142,13 +140,14 @@ void Server::Sending() //Definicja metody Sending
 			clock_t ct;                   //koniec zegara
 			ct = clock();
 			double time = (double)(ct - cto) / CLOCKS_PER_SEC;
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 			cout << "Wyslano slow lacznie: " << wordCountSum - 1 << " Wyslano znakow lacznie " << charCountSum << endl;
 			cout << "Rozmowa trwa: " << time << "sec" << endl;
 			cout << "Waga wyslanych danych: " << bytesSentTotal << "byte" << endl;
 		}
 		else if (bytesSent != 0)
 		{
-			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_RED);
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_RED); //Zolty
 
 			//	cout << "Bytes sent: " << bytesSent << " Wyslano slow: "<< wordCount << " Wyslano znakow" << charCount << endl;
 			wordCount = 1;
@@ -177,7 +176,7 @@ void Server::Sending() //Definicja metody Sending
 				myfile.close();
 			}
 			
-			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY);
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY);//Jasny do pisania
 
 		}
 	}
@@ -217,7 +216,7 @@ void Server::Receiving() //Definicja metody Receiving
 			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
 			cout << "Server: recv() is OK." << endl;
 
-			SetConsoleTextAttribute(hOut, FOREGROUND_INTENSITY);
+			SetConsoleTextAttribute(hOut, FOREGROUND_INTENSITY); //CiemnoSzary
 			string currentTime = currentDateTime();
 
 			char tab2[80]; //Aktualny czas
@@ -229,7 +228,8 @@ void Server::Receiving() //Definicja metody Receiving
 			userName[sizeof(userName) - 1] = 0;
 
 
-			cout << tab2 << userName << recvbuf << endl; //Wyœwietlanie wiadomoœci na ekranie
+			cout << tab2;//Wyœwietlanie daty
+			cout<<userName << recvbuf << endl; //Wyœwietlanie wiadomoœci na ekranie
 
 			//Zapis do pliku
 			ofstream myfile;
@@ -241,7 +241,7 @@ void Server::Receiving() //Definicja metody Receiving
 			}
 			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
 			cout << "Server: Bytes received: " << bytesRecv << "." << endl;
-			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY);
+			SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY);//Jasny do pisania
 		}
 	}
 }
@@ -249,7 +249,7 @@ void Server::Receiving() //Definicja metody Receiving
 
 void Server::loadChatHistory()
 {
-	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);//Seledyn
 
 	ifstream myReadFile;
 	myReadFile.open("history.txt");

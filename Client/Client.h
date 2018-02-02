@@ -37,7 +37,7 @@ public:
 
 	void RunThread(int); // Metoda tworz¹ca nowy w¹tek
 
-	string currentDateTime();
+	string currentDateTime();//Zwraca aktualny czas systemowy
 
 
 	void SetCursor(int, int);
