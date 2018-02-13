@@ -27,7 +27,7 @@ void Server::CreateSocket() //Definicja metody CreateSocket
 void Server::GetAdress() //Definicja metody GetAdress
 {
 	service.sin_family = AF_INET; // Rodzina adresów
-	service.sin_addr.s_addr = inet_addr("127.0.0.1"); // Adres IP serwera
+	service.sin_addr.s_addr = inet_addr("192.168.0.102"); // Adres IP serwera
 	service.sin_port = htons(55555); // Numer Portu
 }
 
@@ -64,7 +64,7 @@ void Server::WaitingForConnection() //Definicja metody WaitingForConnection
 }
 
 
-string Server::currentDateTime()  
+string Server::CurrentDateTime()  
 {
 	time_t rawtime;
 	struct tm * timeinfo;
@@ -154,7 +154,7 @@ void Server::Sending() //Definicja metody Sending
 			//	charCountSum = 0;
 
 
-			string currentTime = currentDateTime();
+			string currentTime = CurrentDateTime();
 
 			char tab2[80]; //Aktualny czas
 			strncpy(tab2, currentTime.c_str(), sizeof(tab2));
@@ -217,7 +217,7 @@ void Server::Receiving() //Definicja metody Receiving
 			cout << "Server: recv() is OK." << endl;
 
 			SetConsoleTextAttribute(hOut, FOREGROUND_INTENSITY); //CiemnoSzary
-			string currentTime = currentDateTime();
+			string currentTime = CurrentDateTime();
 
 			char tab2[80]; //Aktualny czas
 			strncpy(tab2, currentTime.c_str(), sizeof(tab2));
@@ -247,7 +247,7 @@ void Server::Receiving() //Definicja metody Receiving
 }
 
 
-void Server::loadChatHistory()
+void Server::LoadChatHistory()
 {
 	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);//Seledyn
 
@@ -278,7 +278,7 @@ void Server::RunThread(int choice) //Definicja metody RunThread
 	if (choice == 1)
 	{
 		thread t(&Server::Sending, this);
-		loadChatHistory();
+		LoadChatHistory();
 		t.detach();
 	}
 	if (choice == 2)

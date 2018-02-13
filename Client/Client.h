@@ -33,11 +33,11 @@ public:
 	void Sending(); // Metoda wysy³aj¹ca dane
 	void Receiving(); // Metoda odbieraj¹ca dane
 
-	void loadChatHistory();
+	void LoadChatHistory();
 
 	void RunThread(int); // Metoda tworz¹ca nowy w¹tek
 
-	string currentDateTime();//Zwraca aktualny czas systemowy
+	string CurrentDateTime();//Zwraca aktualny czas systemowy
 
 
 	void SetCursor(int, int);

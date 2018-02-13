@@ -30,3 +30,12 @@ Server/.vs/Server/v14/.suo
 *.pdb
 *.ilk
 *.sln
+*.exe
+*.exe
+*.ilk
+*.log
+*.obj
+*.pdb
+*.tlog
+*.iobj
+*.ipdb
